@@ -11,9 +11,11 @@
     <br />
     Today's date is: {{today}}
     <br />
-    Local Customers: {{local_customers}}
+     {% for customers in local_customers %} 
+      Local Customers: {{customers.name}}
+      
     <br />
-   
+   {% endfor %}
 
   {% else %}
     <p>You are at the employee index, but you are not logged in.</p>
