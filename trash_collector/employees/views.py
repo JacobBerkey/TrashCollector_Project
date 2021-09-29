@@ -80,4 +80,17 @@ def edit_employee_profile(request):
             'logged_in_employee': logged_in_employee
         }
         return render(request, 'employees/edit_employee_profile.html', context)
+
+def confirm_pickups(request):
+    logged_in_user = request.user
+    logged_in_employee = Employee.objects.get(user=logged_in_user)
+    if request.method == "POST":
+        confirm = request.POST.get('submit')
+        logged_in_employee.save()
+    else:
+        context = {
+            'logged_in_employee': logged_in_employee
+        }
+
+        return HttpResponseRedirect(reverse('employees:employee_index'))
         

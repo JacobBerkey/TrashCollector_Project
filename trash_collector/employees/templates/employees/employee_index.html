@@ -19,14 +19,26 @@
    {% endfor %}
    {% for customers in my_weekly_pickups %}
    Today's Current Pickups: {{customers.name}}
+   <form method='POST'>
+     {% csrf_token %}
+     {{ form.as_p }}
+   <button type="submit" class="btn btn-outline-primary btn-sm" value="submit">Confirm</button>
+   </form>
    <br />
    <br />
    {% endfor %}
    {% for customers in my_one_time_pickups %}
    Today's One-Time Pickups: {{customers.name}}
+   <form method='POST'>
+    {% csrf_token %}
+    {{ form.as_p }}
+   <button type="submit" class="btn btn-outline-primary btn-sm" value="submit">Confirm</button>
+   </form>
    <br />
    <br />
    {% endfor %}
+   
+      
    
 
   {% else %}
