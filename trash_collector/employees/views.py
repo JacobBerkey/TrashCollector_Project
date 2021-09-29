@@ -21,21 +21,26 @@ def index(request):
 def employee_index(request):
     # The following line will get the logged-in user (if there is one) within any view function
     logged_in_user = request.user
+    
     try:
         # This line will return the employee record of the logged-in user if one exists
         logged_in_employee = Employee.objects.get(user=logged_in_user)
-
+        employee_zip_code = logged_in_employee.zip_code
         today = date.today()
-        local_customers = Customer.objects.filter(zip_code=17751)
+        local_customers = Customer.objects.filter(zip_code=employee_zip_code)
+        
+
+       
         
         context = {
             'logged_in_employee': logged_in_employee,
             'today': today,
-            'local_customers': local_customers
+            'local_customers': local_customers,
         }
         return render(request, 'employees/employee_index.html', context)
     except ObjectDoesNotExist:
         return HttpResponseRedirect(reverse('employees:create_employee'))
+
 
 @login_required
 def create_employee(request):
