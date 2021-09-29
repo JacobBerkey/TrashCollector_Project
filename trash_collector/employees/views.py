@@ -7,16 +7,18 @@ from datetime import date
 from django.apps import apps
 # Create your views here.
 from .models import Employee
+from customers.models import Customer
+
 # TODO: Create a function for each path created in employees/urls.py. Each will need a template as well.
 
 
 def index(request):
     # This line will get the employee model from the other app, it can now be used to query the db for Employees
     Employee = apps.get_model('employees.Employee')
-    return render(request, 'employees/index.html')
+    return render(request, 'employees/employee_index.html')
 
 @login_required
-def index(request):
+def employee_index(request):
     # The following line will get the logged-in user (if there is one) within any view function
     logged_in_user = request.user
     try:
@@ -24,17 +26,19 @@ def index(request):
         logged_in_employee = Employee.objects.get(user=logged_in_user)
 
         today = date.today()
+        local_customers = Customer.objects.filter(zip_code=17751)
         
         context = {
             'logged_in_employee': logged_in_employee,
-            'today': today
+            'today': today,
+            'local_customers': local_customers
         }
-        return render(request, 'employees/index.html', context)
+        return render(request, 'employees/employee_index.html', context)
     except ObjectDoesNotExist:
-        return HttpResponseRedirect(reverse('employees:create'))
+        return HttpResponseRedirect(reverse('employees:create_employee'))
 
 @login_required
-def create(request):
+def create_employee(request):
     logged_in_user = request.user
     if request.method == "POST":
         name_from_form = request.POST.get('name')
@@ -42,9 +46,9 @@ def create(request):
         zip_from_form = request.POST.get('zip_code')
         new_employee = Employee(name=name_from_form, user=logged_in_user, address=address_from_form, zip_code=zip_from_form)
         new_employee.save()
-        return HttpResponseRedirect(reverse('employees:index'))
+        return HttpResponseRedirect(reverse('employees:employee_index'))
     else:
-        return render(request, 'employees/create.html')
+        return render(request, 'employees/create_employee.html')
 
 @login_required
 def edit_employee_profile(request):
@@ -58,7 +62,7 @@ def edit_employee_profile(request):
         logged_in_employee.address = address_from_form
         logged_in_employee.zip_code = zip_from_form
         logged_in_employee.save()
-        return HttpResponseRedirect(reverse('employees:index'))
+        return HttpResponseRedirect(reverse('employees:employee_index'))
     else:
         context = {
             'logged_in_employee': logged_in_employee
