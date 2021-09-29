@@ -9,13 +9,26 @@
     Hello Employee {{ user.username }}!
     <br />
     <br />
-    Today's date is: {{today}}
+    Today's date is: {{weekday}} {{my_date}}
     <br />
-     {% for customers in local_customers %} 
-      Local Customers: {{customers.name}}
-      
+    <br />
+    {% for customers in local_customers %}
+    Customers In My Area: {{customers.name}}
+    <br />
     <br />
    {% endfor %}
+   {% for customers in my_weekly_pickups %}
+   Today's Current Pickups: {{customers.name}}
+   <br />
+   <br />
+   {% endfor %}
+   {% for customers in my_one_time_pickups %}
+   Today's One-Time Pickups: {{customers.name}}
+   <br />
+   <br />
+   {% endfor %}
+   {% if my_date < start_suspended_customers and my_date > end_suspended_customers %}
+   
 
   {% else %}
     <p>You are at the employee index, but you are not logged in.</p>
