@@ -33,7 +33,6 @@ def employee_index(request):
         my_weekly_pickups = Customer.objects.filter(weekly_pickup = weekday)
         my_one_time_pickups = Customer.objects.filter(one_time_pickup = my_date)
         
-        
 
        
         
@@ -43,9 +42,7 @@ def employee_index(request):
             'weekday': weekday,
             'local_customers': local_customers,
             'my_weekly_pickups': my_weekly_pickups,
-            'my_one_time_pickups': my_one_time_pickups,
-            
-
+            'my_one_time_pickups': my_one_time_pickups
         }
         return render(request, 'employees/employee_index.html', context)
     except ObjectDoesNotExist:
