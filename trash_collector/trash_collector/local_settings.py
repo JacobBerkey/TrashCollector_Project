@@ -9,7 +9,7 @@ DATABASES = {
         'ENGINE': 'mysql.connector.django',
         'NAME': 'trash_collector',
         'USER': 'root',
-        'PASSWORD': 'Diablaselena666#',
+        'PASSWORD': 'toor',
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {
