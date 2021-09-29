@@ -1,11 +1,17 @@
 {% extends 'employees/employee_base.html' %}
+<?php
+    $db = mysqli_connect('trash_collector','root','toor','databasename');
 
 {% block title %}{% block header %} Employee Home {% endblock %}{% endblock %}
 
 {% block content %}
   {% if user.is_authenticated %}
     Hello Employee {{ user.username }}!
-    Customers in my area {{}}
+    <br />
+    <br />
+    Today's date is: {{today}}
+    Local Customers: {{local_customers}}
+
   {% else %}
     <p>You are at the employee index, but you are not logged in.</p>
     <a href="{% url 'login' %}">Log In</a>
