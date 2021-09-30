@@ -109,9 +109,6 @@ def register_pickup(request):
 
         return HttpResponseRedirect(reverse("employees:employee_index"))
     else:
-        # Get the customers that have a relevant pickup scheduled for today
-    
-
         context = {
             "user" : current_user,
             
