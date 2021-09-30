@@ -29,15 +29,11 @@
    {% endfor %}
    {% for customers in my_one_time_pickups %}
    Today's One-Time Pickups: {{customers.name}}
-   <form method='POST'>
-    {% csrf_token %}
-    {{ form.as_p }}
-   <button type="submit" class="btn btn-outline-primary btn-sm" value="submit">Confirm</button>
-   </form>
-   <br />
-   <br />
-   {% endfor %}
-   
+  {% endfor %}
+</ul>
+<button type="button" class="btn btn-outline-primary btn-sm">
+  <a class="text-dark text-uppercase text-decoration-none" href="{% url 'employees:register_pickup' %}">Confirm Pickups</a>
+</button>
       
    
 

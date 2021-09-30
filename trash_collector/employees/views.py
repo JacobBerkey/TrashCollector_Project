@@ -81,16 +81,39 @@ def edit_employee_profile(request):
         }
         return render(request, 'employees/edit_employee_profile.html', context)
 
-def confirm_pickups(request):
-    logged_in_user = request.user
-    logged_in_employee = Employee.objects.get(user=logged_in_user)
-    if request.method == "POST":
-        confirm = request.POST.get('submit')
-        logged_in_employee.save()
-    else:
-        context = {
-            'logged_in_employee': logged_in_employee
-        }
-
-        return HttpResponseRedirect(reverse('employees:employee_index'))
         
+def register_pickup(request):
+    # Page to select pickups to complete
+    logged_in_user = request.user
+    Customer = apps.get_model('customers', 'Customer')
+    logged_in_employee = Employee.objects.get(user=logged_in_user)
+    employee_zip_code = logged_in_employee.zip_code
+    local_customers = Customer.objects.filter(zip_code = employee_zip_code)
+
+    # Get the current user and the associated employee object
+    current_user = request.user
+    current_employee = Employee.objects.get(user = current_user)
+
+   
+    if request.method == "POST":
+        
+        today = datetime.date.today()
+
+        
+        for customer_id in selected_customer_ids:
+            current_customer = Customer.objects.get(id=customer_id)
+            current_pickup = CompletedPickup(date=today, customer=current_customer, employee=current_employee)
+            current_pickup.save()
+           
+            charge_customer(current_customer)
+
+        return HttpResponseRedirect(reverse("employees:employee_index"))
+    else:
+        # Get the customers that have a relevant pickup scheduled for today
+    
+
+        context = {
+            "user" : current_user,
+            
+        }
+        return render(request, 'employees/confirmed_pickups.html', context)
