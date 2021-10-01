@@ -1,5 +1,5 @@
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
@@ -9,6 +9,7 @@ import calendar
 # Create your views here.
 from .models import Employee
 from customers.models import Customer
+
 
 # TODO: Create a function for each path created in employees/urls.py. Each will need a template as well.
 
@@ -80,37 +81,3 @@ def edit_employee_profile(request):
             'logged_in_employee': logged_in_employee
         }
         return render(request, 'employees/edit_employee_profile.html', context)
-
-        
-def register_pickup(request):
-    # Page to select pickups to complete
-    logged_in_user = request.user
-    Customer = apps.get_model('customers', 'Customer')
-    logged_in_employee = Employee.objects.get(user=logged_in_user)
-    employee_zip_code = logged_in_employee.zip_code
-    local_customers = Customer.objects.filter(zip_code = employee_zip_code)
-
-    # Get the current user and the associated employee object
-    current_user = request.user
-    current_employee = Employee.objects.get(user = current_user)
-
-   
-    if request.method == "POST":
-        
-        today = datetime.date.today()
-
-        
-        for customer_id in selected_customer_ids:
-            current_customer = Customer.objects.get(id=customer_id)
-            current_pickup = CompletedPickup(date=today, customer=current_customer, employee=current_employee)
-            current_pickup.save()
-           
-            charge_customer(current_customer)
-
-        return HttpResponseRedirect(reverse("employees:employee_index"))
-    else:
-        context = {
-            "user" : current_user,
-            
-        }
-        return render(request, 'employees/confirmed_pickups.html', context)
