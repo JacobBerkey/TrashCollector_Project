@@ -32,6 +32,7 @@ def employee_index(request):
         local_customers = Customer.objects.filter(zip_code = employee_zip_code)
         my_weekly_pickups = Customer.objects.filter(weekly_pickup = weekday)
         my_one_time_pickups = Customer.objects.filter(one_time_pickup = my_date)
+        suspension = Customer.objects.filter(suspend_start = my_date)
         
 
        
@@ -42,7 +43,8 @@ def employee_index(request):
             'weekday': weekday,
             'local_customers': local_customers,
             'my_weekly_pickups': my_weekly_pickups,
-            'my_one_time_pickups': my_one_time_pickups
+            'my_one_time_pickups': my_one_time_pickups,
+            'suspension' : suspension
         }
         return render(request, 'employees/employee_index.html', context)
     except ObjectDoesNotExist:
@@ -82,35 +84,32 @@ def edit_employee_profile(request):
         return render(request, 'employees/edit_employee_profile.html', context)
 
         
-def register_pickup(request):
-    # Page to select pickups to complete
+def update_weekly_pickups(request, customers_id):
     logged_in_user = request.user
-    Customer = apps.get_model('customers', 'Customer')
     logged_in_employee = Employee.objects.get(user=logged_in_user)
-    employee_zip_code = logged_in_employee.zip_code
-    local_customers = Customer.objects.filter(zip_code = employee_zip_code)
-
-    # Get the current user and the associated employee object
-    current_user = request.user
-    current_employee = Employee.objects.get(user = current_user)
-
-   
     if request.method == "POST":
+        update_weekly = Customer.objects.get(pk=customers_id)
+        update_weekly.update = request.POST.get('update')
         
-        today = datetime.date.today()
-
-        
-        for customer_id in selected_customer_ids:
-            current_customer = Customer.objects.get(id=customer_id)
-            current_pickup = CompletedPickup(date=today, customer=current_customer, employee=current_employee)
-            current_pickup.save()
-           
-            charge_customer(current_customer)
-
-        return HttpResponseRedirect(reverse("employees:employee_index"))
-    else:
         context = {
-            "user" : current_user,
-            
+            'update_weekly': update_weekly
         }
-        return render(request, 'employees/confirmed_pickups.html', context)
+        return HttpResponseRedirect(reverse('employees:employee_index'),context)
+
+    else:
+        return render(request, 'employees/update_one_time_pickups.html')
+
+
+def update_one_time_pickups(request, customers_id):
+    logged_in_user = request.user
+    logged_in_employee = Employee.objects.get(user=logged_in_user)
+    if request.method == "POST":
+        update_weekly = Customer.objects.get(pk=customers_id)
+        
+        context = {
+            'update_weekly': update_weekly
+        }
+        return HttpResponseRedirect(reverse('employees:employee_index'),context)
+
+    else:
+        return render(request, 'employees/update_one_time_pickups.html')
