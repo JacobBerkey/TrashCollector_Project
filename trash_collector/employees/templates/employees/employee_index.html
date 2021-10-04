@@ -41,20 +41,6 @@
       </div>
       {% endfor %}
 
-
-
-
-
-
-
-
-{#  As a registered employee, I want my index view to be a list of today’s customers who meet ALL the following criteria:#}
-{#-	Customers in my zip code#}
-{#-	Pickup day is today’s day of week OR One-time pickup date that falls on today#}
-{#-	Non-suspended accounts#}
-{#-	Trash has not yet been picked up today    #}
-
-
   {% else %}
     <p>You are at the employee index, but you are not logged in.</p>
     <a href="{% url 'login' %}">Log In</a>
