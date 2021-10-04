@@ -21,29 +21,39 @@ def index(request):
 
 @login_required
 def employee_index(request):
-    # The following line will get the logged-in user (if there is one) within any view function
     logged_in_user = request.user
-    
+    if request.method == "POST":
+        todays_date = date.today()
+        get_id = request.POST.get('id')
+        single_customer = Customer.objects.get(id=get_id)
+        single_customer.date_of_last_pickup = todays_date
+        single_customer.balance += 20
+        single_customer.save()
+
+        return HttpResponseRedirect(reverse('employees:employee_index'))
     try:
-        # This line will return the employee record of the logged-in user if one exists
         logged_in_employee = Employee.objects.get(user=logged_in_user)
         employee_zip_code = logged_in_employee.zip_code
-        my_date = date.today()
-        weekday = calendar.day_name[my_date.weekday()]
-        local_customers = Customer.objects.filter(zip_code = employee_zip_code)
-        my_weekly_pickups = Customer.objects.filter(weekly_pickup = weekday)
-        my_one_time_pickups = Customer.objects.filter(one_time_pickup = my_date)
-        
+        week_array = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        todays_date = date.today()
+        day_of_week = week_array[todays_date.weekday()]
+        customer_filter = Customer.objects.filter(zip_code=employee_zip_code)\
+            .filter(weekly_pickup=day_of_week)\
+            .exclude(date_of_last_pickup=todays_date)\
+            .exclude(suspend_start=todays_date)\
+            .exclude(suspend_end=todays_date)\
+            .exclude(one_time_pickup=todays_date)
 
-       
-        
+        one_time_filter = Customer.objects.filter(zip_code=employee_zip_code)\
+            .filter(one_time_pickup=todays_date)\
+            .exclude(date_of_last_pickup=todays_date)\
+
         context = {
             'logged_in_employee': logged_in_employee,
-            'my_date': my_date,
-            'weekday': weekday,
-            'local_customers': local_customers,
-            'my_weekly_pickups': my_weekly_pickups,
-            'my_one_time_pickups': my_one_time_pickups
+            'todays_date': todays_date,
+            'day_of_week': day_of_week,
+            'customer_filter': customer_filter,
+            'one_time_filter': one_time_filter
         }
         return render(request, 'employees/employee_index.html', context)
     except ObjectDoesNotExist:
@@ -81,3 +91,34 @@ def edit_employee_profile(request):
             'logged_in_employee': logged_in_employee
         }
         return render(request, 'employees/edit_employee_profile.html', context)
+
+def search_by_day(request):
+    logged_in_user = request.user
+    logged_in_employee = Employee.objects.get(user=logged_in_user)
+    employee_zip_code = logged_in_employee.zip_code
+    if request.method == "POST":
+        get_weekday = request.POST.get('week')
+        customer_filter = Customer.objects.filter(zip_code=employee_zip_code)\
+            .filter(weekly_pickup=get_weekday)\
+
+        chosen_week_day = get_weekday
+        context = {
+            'customer_filter': customer_filter,
+            'logged_in_employee': logged_in_employee,
+            'chosen_week_day': chosen_week_day
+        }
+        return render(request, 'employees/search_by_day.html', context)
+    else:
+        week_array = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        todays_date = date.today()
+        todays_date_weekday = week_array[todays_date.weekday()]
+        customer_filter = Customer.objects.filter(zip_code=employee_zip_code)\
+            .filter(weekly_pickup=todays_date_weekday)
+        chosen_week_day = todays_date_weekday
+        context = {
+            'customer_filter': customer_filter,
+            'logged_in_employee': logged_in_employee,
+            'chosen_week_day': chosen_week_day
+        }
+        return render(request, 'employees/search_by_day.html', context)
+        

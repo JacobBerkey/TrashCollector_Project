@@ -1,0 +1,33 @@
+{% extends 'employees/employee_base.html' %}
+
+{% block header %} Search By Day {% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+
+  <br />
+  <br />
+  Filter From The Following Days
+  <br />
+  <br />
+  <form action="{% url 'employees:search_by_day' %}" method="post">
+  {% csrf_token %} 
+  <select name="week_array" id="week_array">
+  <option value="Monday">Monday</option> <option value="Tuesday">Tuesday</option> <option value="Wednesday">Wednesday</option> <option value="Thursday">Thursday</option> <option value="Friday">Friday</option> <option value="Saturday">Saturday</option> <option value="Sunday">Sunday</option>
+  </select>
+  <input type="submit" value="Search" >
+  </form>
+  <br />
+  Pickups for for {{ chosen_week_day }}:
+  <br />
+  {% for customer in customer_filter %}
+  <br />
+  -{{ customer.name }} {{ customer.address }} {{customer.zip_code}}
+  <br />
+  {% endfor %}
+    {% else %}
+      <p>You are at the employee index, but you are not logged in.</p>
+      <a href="{% url 'login' %}">Log In</a>
+      <a href="{% url 'accounts:register' %}">Sign Up</a>
+    {% endif %}
+  {% endblock %}

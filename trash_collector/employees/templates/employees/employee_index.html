@@ -1,18 +1,17 @@
 {% extends 'employees/employee_base.html' %}
 
-{% block title %}{% block header %} Employee Home {% endblock %}{% endblock %}
+{% block title %} Home {% endblock %}
 
+{% block header %} Employee Home {% endblock %}
+  <div class="container-fluid">
+  <div>
 {% block content %}
+
   {% if user.is_authenticated %}
-    Hello Employee {{ user.username }}!
+
+    Hello {{ logged_in_employee.name }}!<br />
     <br />
-    <br />
-    Today's date is: {{weekday}} {{my_date}}
-    <br />
-    <br />
-    {% for customers in local_customers %}
-    Customers In My Area: {{customers.name}}
-    <br />
+    </div>
     <br />
     <button type="button" class="btn btn-outline-primary btn-sm">
       <a class="text-dark text-uppercase text-decoration-none" href="{% url 'employees:update_customer_pickups' %}">Confirm</a>
@@ -34,8 +33,33 @@
 </button>
 <br />
     {% endfor %}
-   
+    <div class='d-flex justify-content-center'>
+    <div class="container-fluid">
+    Current Job Lists:
+    <br />
+    {% for customer in customer_filter %}
 
+      <form action="{% url 'employees:employee_index' %}" method="post">
+      {% csrf_token %}
+      <br />
+      Customer ID: <input type="id" name="id" id="id" style='width:5%' value="{{ customer.id }}" readonly>
+      <br />
+      Name: {{ customer.name }}
+      <input type="submit" value="Confirm" >
+      <br />
+      </form>
+      {% endfor %}
+    {% for customer in one_day_match %}
+
+      <form action="{% url 'employees:employee_index' %}" method="post">
+      {% csrf_token %}
+      Customer ID: <input type="id" name="id" id="id" value="{{ customer.id }}" readonly>
+      Name: {{ customer.name }}
+      <input type="submit" value="Confirm" >
+      </form>
+      </div>
+      </div>
+      {% endfor %}
   {% else %}
     <p>You are at the employee index, but you are not logged in.</p>
     <a href="{% url 'login' %}">Log In</a>
