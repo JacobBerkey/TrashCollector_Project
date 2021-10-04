@@ -1,40 +1,59 @@
 {% extends 'employees/employee_base.html' %}
-<?php
-    $db = mysqli_connect('trash_collector','root','toor','databasename');
 
-{% block title %}{% block header %} Employee Home {% endblock %}{% endblock %}
+{% block title %} Home {% endblock %}
 
+{% block header %} Employee Home {% endblock %}
+  <div class="container-fluid">
+  <div>
 {% block content %}
-  {% if user.is_authenticated %}
-    Hello Employee {{ user.username }}!
-    <br />
-    <br />
-    Today's date is: {{weekday}} {{my_date}}
-    <br />
-    <br />
-    
-    {% for customers in local_customers %}
-    Customers In My Area: {{customers.name}}<a href="{% url 'employees:update_weekly_pickups' customers.id %}">Click for Details</a></h2> </li>
-    <br />
-   {% endfor %}
-  
-   
-   {% for customers in my_weekly_pickups %}
-   Today's Current Pickups: {{customers.name}} <a href="{% url 'employees:update_weekly_pickups' customers.id %}">Click for Details</a></h2> </li>
-  <br />
-   {% endfor %}
-  
-  
-   {% for customers in my_one_time_pickups %}
-   Today's One-Time Pickups: {{customers.name}} <a href="{% url 'employees:update_one_time_pickups' customers.id %}">Click for Details</a></h2> </li>
-<br />
-    {% endfor %}
-    
 
-    {% for customers in suspension %}
-    Current Suspended Accounts: {{customers.name}}
-    {% endfor %}
-   
+  {% if user.is_authenticated %}
+
+    Hello {{ logged_in_employee.name }}!<br />
+    <br />
+    </div>
+    <br />
+    <div class='d-flex justify-content-center'>
+    <div class="container-fluid">
+    Current Job Lists:
+    <br />
+    {% for customer in customer_filter %}
+
+      <form action="{% url 'employees:employee_index' %}" method="post">
+      {% csrf_token %}
+      <br />
+      Customer ID: <input type="id" name="id" id="id" style='width:5%' value="{{ customer.id }}" readonly>
+      <br />
+      Name: {{ customer.name }}
+      <input type="submit" value="Confirm" >
+      <br />
+      </form>
+      {% endfor %}
+    {% for customer in one_day_match %}
+
+      <form action="{% url 'employees:employee_index' %}" method="post">
+      {% csrf_token %}
+      Customer ID: <input type="id" name="id" id="id" value="{{ customer.id }}" readonly>
+      Name: {{ customer.name }}
+      <input type="submit" value="Confirm" >
+      </form>
+      </div>
+      </div>
+      {% endfor %}
+
+
+
+
+
+
+
+
+{#  As a registered employee, I want my index view to be a list of today’s customers who meet ALL the following criteria:#}
+{#-	Customers in my zip code#}
+{#-	Pickup day is today’s day of week OR One-time pickup date that falls on today#}
+{#-	Non-suspended accounts#}
+{#-	Trash has not yet been picked up today    #}
+
 
   {% else %}
     <p>You are at the employee index, but you are not logged in.</p>

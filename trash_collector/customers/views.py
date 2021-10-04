@@ -4,8 +4,8 @@ from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from datetime import date
-
 from .models import Customer
+from django.apps import apps
 
 @login_required
 def index(request):
@@ -89,3 +89,4 @@ def edit_profile(request):
             'logged_in_customer': logged_in_customer
         }
         return render(request, 'customers/edit_profile.html', context)
+        
