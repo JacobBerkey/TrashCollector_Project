@@ -13,6 +13,26 @@
     <br />
     </div>
     <br />
+    <button type="button" class="btn btn-outline-primary btn-sm">
+      <a class="text-dark text-uppercase text-decoration-none" href="{% url 'employees:update_customer_pickups' %}">Confirm</a>
+    </button>
+    <br />
+   {% endfor %}
+   {% for customers in my_weekly_pickups %}
+   Today's Current Pickups: {{customers.name}}
+   <button type="button" class="btn btn-outline-primary btn-sm">
+    <a class="text-dark text-uppercase text-decoration-none" href="{% url 'employees:update_customer_pickups' %}">Confirm</a>
+  </button>
+  <br />
+   {% endfor %}
+   {% for customers in my_one_time_pickups %}
+   Today's One-Time Pickups: 
+     {{customers.name}} 
+<button type="button" class="btn btn-outline-primary btn-sm mb-2">
+  <a class="text-dark text-uppercase text-decoration-none" href="{% url 'employees:update_customer_pickups' %}">Confirm</a>
+</button>
+<br />
+    {% endfor %}
     <div class='d-flex justify-content-center'>
     <div class="container-fluid">
     Current Job Lists:
@@ -40,7 +60,6 @@
       </div>
       </div>
       {% endfor %}
-
   {% else %}
     <p>You are at the employee index, but you are not logged in.</p>
     <a href="{% url 'login' %}">Log In</a>
